@@ -85,6 +85,8 @@ public class FileManager {
     	
     	// Task2: assign a replica as the primary for this file. Hint, see the slide (project 3) on Canvas
     	
+    	Random rnd = new Random();
+    	int index = rnd.nextInt(Util.numReplicas-1);
     	// create replicas of the filename
     	
 		// iterate over the replicas

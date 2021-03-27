@@ -43,9 +43,9 @@ public class Util {
 		
 		// implement: read the descriptions above
 		boolean cond = false;
-
-		
 		return cond;
+		
+		
 	}
 	
 	public static List<String> toString(List<NodeInterface> list) throws RemoteException {

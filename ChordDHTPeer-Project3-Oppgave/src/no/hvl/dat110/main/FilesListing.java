@@ -149,7 +149,6 @@ public class FilesListing extends JFrame implements PropertyChangeListener {
 		
 		DefaultTableModel tmodel = (DefaultTableModel) table.getModel();
 		tmodel.addRow(rdata);
-		
 	}
 	
 	@Override
