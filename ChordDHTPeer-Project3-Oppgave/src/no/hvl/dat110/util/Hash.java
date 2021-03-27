@@ -12,11 +12,12 @@ import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+
 public class Hash { 
 	
 	private static BigInteger hashint; 
 	
-	public static BigInteger hashOf(String entity) {		
+	public static BigInteger hashOf(String entity) throws NoSuchAlgorithmException, UnsupportedEncodingException {		
 		
 		// Task: Hash a given string using MD5 and return the result as a BigInteger.
 		
@@ -30,10 +31,16 @@ public class Hash {
 		
 		// return the BigInteger
 		
-		return hashint;
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			byte[] bytesOfMessage = entity.getBytes("UTF-8");
+			byte[] theDigest = md.digest(bytesOfMessage);
+			
+			hashint = new BigInteger(toHex(theDigest), 16);
+		
+			return hashint;
 	}
 	
-	public static BigInteger addressSize() {
+	public static BigInteger addressSize() throws NoSuchAlgorithmException {
 		
 		// Task: compute the address size of MD5
 		
@@ -45,16 +52,24 @@ public class Hash {
 		
 		// return the address size
 		
-		return null;
+		MessageDigest md = MessageDigest.getInstance("MD5");
+		int digestLength = md.getDigestLength();
+		int numberOfBits = digestLength * 8;
+		int addressSize = 2 ^ numberOfBits;
+		BigInteger addressSizeBigInt = BigInteger.valueOf(addressSize);
+		
+		
+		return addressSizeBigInt;
 	}
 	
-	public static int bitSize() {
+	public static int bitSize() throws NoSuchAlgorithmException {
 		
-		int digestlen = 0;
+		MessageDigest md = MessageDigest.getInstance("MD5");
+		int digestLength = md.getDigestLength();
 		
 		// find the digest length
 		
-		return digestlen*8;
+		return digestLength*8;
 	}
 	
 	public static String toHex(byte[] digest) {

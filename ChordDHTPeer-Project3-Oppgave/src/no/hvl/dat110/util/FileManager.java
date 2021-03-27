@@ -9,6 +9,7 @@ package no.hvl.dat110.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.rmi.RemoteException;
 import java.security.NoSuchAlgorithmException;
@@ -52,11 +53,17 @@ public class FileManager {
 		this.chordnode = chordnode;
 	}
 	
-	public void createReplicaFiles() {
+	public void createReplicaFiles() throws NoSuchAlgorithmException, UnsupportedEncodingException {
 	 	
 		// implement
 		
 		// set a loop where size = numReplicas
+		
+		for (int i = 0; i < Util.numReplicas; i++) {
+			BigInteger big = Hash.hashOf(getFilename()+i);
+			//setFilename(big.toString());
+			replicafiles[i] = big;
+			}
 		
 		// replicate by adding the index to filename
 		
@@ -64,7 +71,7 @@ public class FileManager {
 		
 		// store the hash in the replicafiles array.
 
-	}
+		}
 	
     /**
      * 

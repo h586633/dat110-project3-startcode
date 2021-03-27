@@ -29,9 +29,14 @@ public class ChordLookup {
 		
 		// ask this node to find the successor of key
 		
+		node.getNodeKeys();
+		node.getSuccessor().getNodeKeys();
+		
 		// get the successor of the node
 		
 		// get the stub for this successor (Util.getProcessStub())
+		
+		Util.getProcessStub(node.getSuccessor().getNodeName(), 9090);
 		
 		// check that key is a member of the set {nodeid+1,...,succID} i.e. (nodeid+1 <= key <= succID) using the ComputeLogic
 		
@@ -41,7 +46,7 @@ public class ChordLookup {
 		
 		// do return highest_pred.findSuccessor(key) - This is a recursive call until logic returns true
 				
-		return null;					
+		//return null;					
 	}
 	
 	/**
