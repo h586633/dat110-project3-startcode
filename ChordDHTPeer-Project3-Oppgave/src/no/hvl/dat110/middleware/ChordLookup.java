@@ -49,6 +49,29 @@ public class ChordLookup {
 		if (Util.computeLogic(key, stub.getNodeID().add(new BigInteger("1")), successor.getNodeID())){
 			return successor;
 		}
+		
+		/*if (Util.computeLogic(stub.getNodeID().add(new BigInteger("1")),key, successor.getNodeID())){
+			return successor;
+		}*/
+		
+		/*if (Util.computeLogic(stub.getNodeID().add(new BigInteger("1")),successor.getNodeID(), key )){
+			return successor;
+		}*/
+		
+		/*if (Util.computeLogic(key, successor.getNodeID() , stub.getNodeID().add(new BigInteger("1")))){
+			return successor;
+		}
+		*/
+		
+		/*if (Util.computeLogic(successor.getNodeID(), stub.getNodeID().add(new BigInteger("1")), key)){
+			return successor;
+		}*/
+		
+		/*if (Util.computeLogic(successor.getNodeID(), key, stub.getNodeID().add(new BigInteger("1")) )){
+			return successor;
+		}
+		*/
+		
 		else {
 			NodeInterface highest = findHighestPredecessor(key);
 			return highest.findSuccessor(key);
