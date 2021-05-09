@@ -3,6 +3,7 @@ package no.hvl.dat110.middleware;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.security.NoSuchAlgorithmException;
 
 import no.hvl.dat110.chordoperations.ChordProtocols;
 import no.hvl.dat110.chordoperations.JoinRing;
@@ -74,9 +75,24 @@ public class NodeServer {
 			@Override 
 			public void run() {
 				while(true) {
-					protocols.updateSuccessor();
-					protocols.stabilizeRing();
-					protocols.fixFingerTable();
+					try {
+						protocols.updateSuccessor();
+					} catch (NoSuchAlgorithmException e3) {
+						// TODO Auto-generated catch block
+						e3.printStackTrace();
+					}
+					try {
+						protocols.stabilizeRing();
+					} catch (NoSuchAlgorithmException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+					}
+					try {
+						protocols.fixFingerTable();
+					} catch (NoSuchAlgorithmException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 					protocols.checkPredecessor();
 					protocols.printInfo();
 					

@@ -11,6 +11,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -35,18 +36,52 @@ public class Util {
 	 * @param lower
 	 * @param upper
 	 * @return true if (lower <= id <= upper) or false otherwise
+	 * @throws NoSuchAlgorithmException 
 	 */
-	public static boolean computeLogic(BigInteger id, BigInteger lower, BigInteger upper) {
+	public static boolean computeLogic(BigInteger id, BigInteger lower, BigInteger upper) throws NoSuchAlgorithmException {
 		
-		// a formula to check whether an id falls within the set {lower, upper} using the address size as our bound (modulos operation)
-		// it modifies 'upper' and 'id' when lower > upper e.g. set (6, 2) in mod 10 = {6, 7, 8, 9, 0, 1, 2}
-		
-		// implement: read the descriptions above
-		boolean cond = false;
-		return cond;
-		
-		
-	}
+				// a formula to check whether an id falls within the set {lower, upper} using the address size as our bound (modulos operation)
+				// it modifies 'upper' and 'id' when lower > upper e.g. set (6, 2) in mod 10 = {6, 7, 8, 9, 0, 1, 2}
+				
+				// implement: read the descriptions above
+				boolean cond = false;
+				BigInteger zero = new BigInteger("0");
+
+				BigInteger bound = Hash.addressSize();
+
+				/*if (id.compareTo(bound) >= 0 ) {
+					id = id.mod(bound);
+				}
+				
+				/*if (lower.compareTo(upper) > 0) {
+					upper = upper.mod(bound);
+				}
+				
+				&& id.compareTo(upper) > 0
+				if (id.compareTo(zero) > 0 && id.compareTo(upper) <= 0) {
+					id = id.mod(bound);
+				}
+				*/
+
+				if (upper.compareTo(lower) < 0){
+					/*if ((id.compareTo(lower) >= 0) || (id.compareTo(upper) <= 0)){
+						cond = true;
+					}*/
+					if ((id.compareTo(lower) >= 0 && id.compareTo(bound) < 0) || (id.compareTo(zero) > 0 && id.compareTo(upper) <= 0)) {
+						cond = true;
+					}
+				} else if (id.compareTo(lower) >= 0 && (id.compareTo(upper) <= 0)){
+					cond = true;
+				}
+				
+				/*
+				if ((id.compareTo(lower) >= 0 && id.compareTo(bound) < 0) || (id.compareTo(zero) > 0 && id.compareTo(upper) <= 0)) {
+					cond = true;
+				}
+				*/
+
+				return cond;
+			}
 	
 	public static List<String> toString(List<NodeInterface> list) throws RemoteException {
 		List<String> nodestr = new ArrayList<String>();
@@ -118,5 +153,4 @@ public class Util {
 		
 		return processes;
 	}
-
 }

@@ -5,6 +5,7 @@ package no.hvl.dat110.chordoperations;
 
 import java.math.BigInteger;
 import java.rmi.RemoteException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import no.hvl.dat110.middleware.Node;
@@ -61,7 +62,7 @@ public class ChordProtocols {
 
 	}
 	
-	public void fixFingerTable() {
+	public void fixFingerTable() throws NoSuchAlgorithmException {
 		
 		try {
 			System.out.println("Fixing the FingerTable for the Node: "+ chordnode.getNodeName());
@@ -102,7 +103,7 @@ public class ChordProtocols {
 		}
 	}
 	
-	public void stabilizeRing() {
+	public void stabilizeRing() throws NoSuchAlgorithmException {
 		
 		try {
 			System.out.println("Stabilizing ring from "+chordnode.getNodeName()+"...");
@@ -148,8 +149,9 @@ public class ChordProtocols {
 	 * periodically, a node n tries to resolve the next key (i.e. succ id which is nodeid + 1) from itself 
 	 * node.findsuccessor(node+1). The result is the node ns that's still active and responsible for nodeid+1
 	 * which is then the successor of n.
+	 * @throws NoSuchAlgorithmException 
 	 */
-	public void updateSuccessor() {
+	public void updateSuccessor() throws NoSuchAlgorithmException {
 		try {
 			System.out.println("Updating the successor for Node: "+ chordnode.getNodeName());
 			BigInteger succid = chordnode.getNodeID().add(new BigInteger("1")); 					// get the succid of (nodestub+1)	

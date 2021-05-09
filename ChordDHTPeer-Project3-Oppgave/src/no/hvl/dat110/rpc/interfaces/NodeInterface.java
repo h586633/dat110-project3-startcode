@@ -9,6 +9,7 @@ package no.hvl.dat110.rpc.interfaces;
 import java.math.BigInteger;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,9 +39,9 @@ public interface NodeInterface extends Remote {
 	
 	public void removeKey(BigInteger id) throws RemoteException;
 	
-	public NodeInterface findSuccessor(BigInteger key) throws RemoteException;
+	public NodeInterface findSuccessor(BigInteger key) throws RemoteException, NoSuchAlgorithmException;
 	
-	public void notify(NodeInterface pred) throws RemoteException;
+	public void notify(NodeInterface pred) throws RemoteException, NoSuchAlgorithmException;
 	
 	public Message getFilesMetadata(BigInteger fileID) throws RemoteException;
 	

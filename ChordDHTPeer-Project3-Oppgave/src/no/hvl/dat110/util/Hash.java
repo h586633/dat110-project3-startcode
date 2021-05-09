@@ -19,57 +19,69 @@ public class Hash {
 	
 	public static BigInteger hashOf(String entity) throws NoSuchAlgorithmException, UnsupportedEncodingException {		
 		
-		// Task: Hash a given string using MD5 and return the result as a BigInteger.
+				// Task: Hash a given string using MD5 and return the result as a BigInteger.
 		
-		// we use MD5 with 128 bits digest
-		
-		// compute the hash of the input 'entity'
-		
-		// convert the hash into hex format
-		
-		// convert the hex into BigInteger
-		
-		// return the BigInteger
-		
-			MessageDigest md = MessageDigest.getInstance("MD5");
-			byte[] bytesOfMessage = entity.getBytes("UTF-8");
-			byte[] theDigest = md.digest(bytesOfMessage);
-			
-			hashint = new BigInteger(toHex(theDigest), 16);
-		
-			return hashint;
+				// we use MD5 with 128 bits digest
+				
+				// compute the hash of the input 'entity'
+				
+				// convert the hash into hex format
+				
+				// convert the hex into BigInteger
+				
+				// return the BigInteger
+				
+				MessageDigest md = null;
+				try {
+					md = MessageDigest.getInstance("MD5");
+				} catch (NoSuchAlgorithmException e) {
+					System.out.println("No such algorithm found! " + e);
+				}
+				byte[] bytes = entity.getBytes("UTF-8");
+				byte[] digest = md.digest(bytes);
+				hashint = new BigInteger (toHex(digest), 16);
+				
+				return hashint;
 	}
 	
 	public static BigInteger addressSize() throws NoSuchAlgorithmException {
 		
-		// Task: compute the address size of MD5
+				// Task: compute the address size of MD5
 		
-		// get the digest length
-		
-		// compute the number of bits = digest length * 8
-		
-		// compute the address size = 2 ^ number of bits
-		
-		// return the address size
-		
-		MessageDigest md = MessageDigest.getInstance("MD5");
-		int digestLength = md.getDigestLength();
-		int numberOfBits = digestLength * 8;
-		int addressSize = 2 ^ numberOfBits;
-		BigInteger addressSizeBigInt = BigInteger.valueOf(addressSize);
-		
-		
-		return addressSizeBigInt;
+				// get the digest length
+				
+				// compute the number of bits = digest length * 8
+				
+				// compute the address size = 2 ^ number of bits
+				
+				// return the address size
+				
+				MessageDigest md = null;
+				try {
+					md = MessageDigest.getInstance("MD5");
+				} catch (NoSuchAlgorithmException e) {
+					System.out.println("No such algorithm found! " + e);
+				}
+				int dLength = md.getDigestLength() * 8;
+				BigInteger addressSize = BigInteger.valueOf((long)Math.pow(2, dLength));
+				return addressSize;
 	}
 	
 	public static int bitSize() throws NoSuchAlgorithmException {
 		
-		MessageDigest md = MessageDigest.getInstance("MD5");
-		int digestLength = md.getDigestLength();
+		int digestlen = 0;
 		
 		// find the digest length
 		
-		return digestLength*8;
+		MessageDigest md = null;
+		try {
+			md = MessageDigest.getInstance("MD5");
+		} catch (NoSuchAlgorithmException e) {
+			System.out.println("No such algorithm found! " + e);
+		}
+		digestlen = md.getDigestLength();
+		
+		return digestlen*8;
 	}
 	
 	public static String toHex(byte[] digest) {

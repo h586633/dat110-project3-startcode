@@ -18,8 +18,10 @@ import java.text.NumberFormat;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import no.hvl.dat110.middleware.Message;
+import no.hvl.dat110.middleware.Node;
 import no.hvl.dat110.rpc.interfaces.NodeInterface;
 import no.hvl.dat110.util.Hash;
 
@@ -60,9 +62,9 @@ public class FileManager {
 		// set a loop where size = numReplicas
 		
 		for (int i = 0; i < Util.numReplicas; i++) {
-			BigInteger big = Hash.hashOf(getFilename()+i);
-			//setFilename(big.toString());
-			replicafiles[i] = big;
+			filename += i;
+			BigInteger hash = Hash.hashOf(filename);
+			replicafiles [i] = hash;
 			}
 		
 		// replicate by adding the index to filename
@@ -77,16 +79,15 @@ public class FileManager {
      * 
      * @param bytesOfFile
      * @throws RemoteException 
+     * @throws NoSuchAlgorithmException 
      */
-    public int distributeReplicastoPeers() throws RemoteException {
+    public int distributeReplicastoPeers() throws RemoteException, NoSuchAlgorithmException {
     	int counter = 0;
     	
     	// Task1: Given a filename, make replicas and distribute them to all active peers such that: pred < replica <= peer
     	
     	// Task2: assign a replica as the primary for this file. Hint, see the slide (project 3) on Canvas
     	
-    	Random rnd = new Random();
-    	int index = rnd.nextInt(Util.numReplicas-1);
     	// create replicas of the filename
     	
 		// iterate over the replicas
@@ -99,6 +100,18 @@ public class FileManager {
     	
     	// increment counter
     	
+    	Random random = new Random();	//modification for task 5
+		int rand = random.nextInt(replicafiles.length);
+    	for (int i = 0; i < replicafiles.length; i++) {
+			NodeInterface successor = chordnode.findSuccessor(replicafiles[i]);
+			successor.addKey(replicafiles[i]);
+			if (i == rand){		//modification for task 5, randomly assigning a random peer to the file
+				successor.saveFileContent(filename, replicafiles[i], bytesOfFile, true);
+			} else {
+				successor.saveFileContent(filename, replicafiles[i], bytesOfFile, false);
+			}
+			counter++;
+		}
     		
 		return counter;
     }
@@ -108,8 +121,9 @@ public class FileManager {
 	 * @param filename
 	 * @return list of active nodes having the replicas of this file
 	 * @throws RemoteException 
+	 * @throws NoSuchAlgorithmException 
 	 */
-	public Set<Message> requestActiveNodesForFile(String filename) throws RemoteException {
+	public Set<Message> requestActiveNodesForFile(String filename) throws RemoteException, NoSuchAlgorithmException {
 		
 		this.filename = filename;
 		Set<Message> succinfo = new HashSet<Message>();
@@ -125,16 +139,32 @@ public class FileManager {
 		
 		// save the metadata in the set succinfo.
 		
-		this.activeNodesforFile = succinfo;
+		//this.activeNodesforFile = succinfo;
 		
+		this.filename = filename;
+		this.activeNodesforFile = succinfo;
+
+		try {
+			createReplicaFiles();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		for (int i = 0; i < replicafiles.length; i++){
+			NodeInterface successor = chordnode.findSuccessor(replicafiles[i]);
+			succinfo.add(successor.getFilesMetadata(replicafiles[i]));
+		}
+
 		return succinfo;
 	}
 	
 	/**
 	 * Find the primary server - Remote-Write Protocol
 	 * @return 
+	 * @throws UnsupportedEncodingException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws RemoteException 
 	 */
-	public NodeInterface findPrimaryOfItem() {
+	public NodeInterface findPrimaryOfItem() throws RemoteException, NoSuchAlgorithmException, UnsupportedEncodingException {
 
 		// Task: Given all the active peers of a file (activeNodesforFile()), find which is holding the primary copy
 		
@@ -146,8 +176,42 @@ public class FileManager {
 		
 		// return the primary
 		
-		return null; 
-	}
+		for (Message m : activeNodesforFile) {
+			if (m.isPrimaryServer()) {
+				NodeInterface stub = Util.getProcessStub(m.getNodeIP(), m.getPort());
+				return stub;
+			}
+		}
+			
+		return null;
+			
+			
+		//Set<Message> primary = activeNodesforFile.stream().filter(a -> a.isPrimaryServer()).collect(Collectors.toSet()); 
+			/*if (activeNodesforFile.size() < 0) {
+				System.out.println("No primary elements found for the given file!");
+			}
+			activeNodesforFile.
+			if (primaryNodesforFile.getNameOfFile() == filename){
+				return Util.getProcessStub(prim.getNodeIP(), prim.getPort());
+			} else {
+				System.out.println("No primary nodes found for file " + filename + " ! FileManager.findPrimaryOfItem()");
+			}
+			*/
+		}
+	
+		
+		
+		/*assert primary.size() > 0 : "No primary elements found for the given file!";
+		while (primary.iterator().hasNext()){
+			Message prim = primary.iterator().next();
+			if (prim.getNameOfFile() == filename){
+				return Util.getProcessStub(prim.getNodeIP(), prim.getPort());
+			} else {
+				System.out.println("No primary nodes found for file " + filename + " ! FileManager.findPrimaryOfItem()");
+			}
+		}
+		return null;*/
+	
 	
     /**
      * Read the content of a file and return the bytes

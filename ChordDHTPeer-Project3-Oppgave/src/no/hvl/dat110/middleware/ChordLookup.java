@@ -5,6 +5,7 @@ package no.hvl.dat110.middleware;
 
 import java.math.BigInteger;
 import java.rmi.RemoteException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,52 +26,67 @@ public class ChordLookup {
 		this.node = node;
 	}
 	
-	public NodeInterface findSuccessor(BigInteger key) throws RemoteException {
+	public NodeInterface findSuccessor(BigInteger key) throws RemoteException, NoSuchAlgorithmException {
 		
 		// ask this node to find the successor of key
 		
-		node.getNodeKeys();
-		node.getSuccessor().getNodeKeys();
-		
-		// get the successor of the node
-		
-		// get the stub for this successor (Util.getProcessStub())
-		
-		Util.getProcessStub(node.getSuccessor().getNodeName(), 9090);
-		
-		// check that key is a member of the set {nodeid+1,...,succID} i.e. (nodeid+1 <= key <= succID) using the ComputeLogic
-		
-		// if logic returns true, then return the successor
-		
-		// if logic returns false; call findHighestPredecessor(key)
-		
-		// do return highest_pred.findSuccessor(key) - This is a recursive call until logic returns true
+				// get the successor of the node
 				
-		//return null;					
-	}
+				// get the stub for this successor (Util.getProcessStub())
+				
+				// check that key is a member of the set {nodeid+1,...,succID} i.e. (nodeid+1 <= key <= succID) using the ComputeLogic
+				
+				// if logic returns true, then return the successor
+				
+				// if logic returns false; call findHighestPredecessor(key)
+				
+				// do return highest_pred.findSuccessor(key) - This is a recursive call until logic returns true
+
+
+
+				NodeInterface successor = node.getSuccessor();
+
+				NodeInterface stub = Util.getProcessStub(successor.getNodeName(), successor.getPort());
+				if (Util.computeLogic(key, stub.getNodeID().add(new BigInteger("1")), successor.getNodeID())){
+					return successor;
+				} else {
+					NodeInterface highest = findHighestPredecessor(key);
+					return highest.findSuccessor(key);
+				}
+			}				
 	
 	/**
 	 * This method makes a remote call. Invoked from a local client
 	 * @param ID BigInteger
 	 * @return
 	 * @throws RemoteException
+	 * @throws NoSuchAlgorithmException 
 	 */
-	private NodeInterface findHighestPredecessor(BigInteger key) throws RemoteException {
+	private NodeInterface findHighestPredecessor(BigInteger key) throws RemoteException, NoSuchAlgorithmException {
 		
 		// collect the entries in the finger table for this node
 		
-		// starting from the last entry, iterate over the finger table
-		
-		// for each finger, obtain a stub from the registry
-		
-		// check that finger is a member of the set {nodeID+1,...,ID-1} i.e. (nodeID+1 <= finger <= key-1) using the ComputeLogic
-		
-		// if logic returns true, then return the finger (means finger is the closest to key)
-		
-		return (NodeInterface) node;			
-	}
+				// starting from the last entry, iterate over the finger table
+				
+				// for each finger, obtain a stub from the registry
+				
+				// check that finger is a member of the set {nodeID+1,...,ID-1} i.e. (nodeID+1 <= finger <= key-1) using the ComputeLogic
+				
+				// if logic returns true, then return the finger (means finger is the closest to key)
+
+				List<NodeInterface> fingerTable = node.getFingerTable();
+				for (int i = fingerTable.size(); i > 0; i--){
+					NodeInterface finger = fingerTable.get(i);
+					NodeInterface stub = Util.getProcessStub(finger.getNodeName(), finger.getPort());
+					if (Util.computeLogic(finger.getNodeID(), stub.getNodeID().add(new BigInteger("1")), key.subtract(new BigInteger("1")))){
+						return finger;
+					}
+				}
+
+				return (NodeInterface) node;			
+			}
 	
-	public void copyKeysFromSuccessor(NodeInterface succ) {
+	public void copyKeysFromSuccessor(NodeInterface succ) throws NoSuchAlgorithmException {
 		
 		Set<BigInteger> filekeys;
 		try {
@@ -109,7 +125,7 @@ public class ChordLookup {
 		}
 	}
 
-	public void notify(NodeInterface pred_new) throws RemoteException {
+	public void notify(NodeInterface pred_new) throws RemoteException, NoSuchAlgorithmException {
 		
 		NodeInterface pred_old = node.getPredecessor();
 		

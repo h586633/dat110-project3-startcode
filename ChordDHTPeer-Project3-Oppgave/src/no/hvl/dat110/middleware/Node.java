@@ -1,8 +1,10 @@
 package no.hvl.dat110.middleware;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -42,7 +44,7 @@ public class Node extends UnicastRemoteObject implements NodeInterface {
 	
 	private static final long serialVersionUID = 1L;
 	
-	public Node(String nodename, int port) throws RemoteException {
+	public Node(String nodename, int port) throws RemoteException, NoSuchAlgorithmException, UnsupportedEncodingException {
 		super();
 		this.port = port;
 		this.nodename = nodename;									// use a different name as "IP" for single machine simulation
@@ -123,19 +125,19 @@ public class Node extends UnicastRemoteObject implements NodeInterface {
 	}
 
 	@Override
-	public NodeInterface findSuccessor(BigInteger key) throws RemoteException {
+	public NodeInterface findSuccessor(BigInteger key) throws RemoteException, NoSuchAlgorithmException {
 		// ask this node to find the successor of id
 		return lookup.findSuccessor(key);
 	}
 	
 	//@Override
-	public void copyKeysFromSuccessor(NodeInterface succ) {
+	public void copyKeysFromSuccessor(NodeInterface succ) throws NoSuchAlgorithmException {
 		
 		lookup.copyKeysFromSuccessor(succ);
 	}
 
 	@Override
-	public void notify(NodeInterface pred_new) throws RemoteException {
+	public void notify(NodeInterface pred_new) throws RemoteException, NoSuchAlgorithmException {
 		
 		lookup.notify(pred_new);		
 	}
